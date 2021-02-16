@@ -13,8 +13,10 @@ def load_and_plot(filename, boxsize):
     rho=pc.rho(npar,boxsize)
     pairs=pc.get_pair(points,boxsize,rcut)
     rvec =pc.get_rvec(points,boxsize,rcut,pairs)
-    r,rdf=pc.gen_rdf(rvec,npar,pc.rho(npar,boxsize),rcut=rcut,nbins=400)
-    q=np.array([(1/boxsize[0])*(j+1) for j in range(500)])
+    r,rdf=pc.gen_rdf(rvec,npar,pc.rho(npar,boxsize),rcut=rcut,nbins=200)
+    # min q = 2*pi/boxsize[0]
+    # max q = 500*(min q)
+    q=np.array([(2*np.pi/boxsize[0])*(j+1) for j in range(500)])
     Sq=np.zeros(q.shape)
     if len(boxsize)==3:
         for j in range(len(q)):
@@ -24,10 +26,16 @@ def load_and_plot(filename, boxsize):
             Sq[j]=(pc.Sint2D(q[j],r,rdf,rho))
 
     plt.clf() 
+    plt.figure(figsize=(8,4))
     ax1=plt.subplot(121)
     ax2=plt.subplot(122)
     ax1.plot(r,rdf)
+    ax1.set_xlabel('$r$')
+    ax1.set_ylabel('$g(r)$')
     ax2.plot(q,Sq)
+    ax2.set_xlabel(r'$q/ \frac{2\pi k}{L}$')
+    ax2.set_ylabel('$S(q)$')
+    plt.tight_layout()
     name=os.path.splitext(os.path.basename(filename))[0]
     plt.savefig(name+'.png',dpi=300)
 
