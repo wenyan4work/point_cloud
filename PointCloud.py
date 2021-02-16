@@ -5,14 +5,14 @@ import scipy.special as sp
 import scipy.integrate as si
 import numba as nb
 
-@nb.njit
+# @nb.njit
 def rho(npar,boxsize):
     vol=1
     for l in boxsize:
         vol=vol*l
     return float(npar)/float(vol)
 
-@nb.njit
+# @nb.njit
 def closest_point(target, points):
     target=np.array(target)
     points=np.array(points)
@@ -23,7 +23,7 @@ def closest_point(target, points):
     ind=np.argmin(distance)
     return points[ind],ind
 
-@nb.njit
+# @nb.njit
 def closest_point1d(target, points):
     distance=[]
     for p in points:
@@ -32,7 +32,7 @@ def closest_point1d(target, points):
     ind=np.argmin(distance)
     return points[ind],ind
 
-@nb.njit
+# @nb.njit
 def get_closetimage(target,source,boxsize):
     dim=target.shape[0]
     assert source.shape[0]==dim
@@ -55,7 +55,7 @@ def get_pair(coords, boxsize, rcut=None):
     pairs.update(pairs2)
     return pairs
 
-@nb.njit
+# @nb.njit
 def impose_pbc(coords,boxsize):
     dim=len(boxsize)
     for p in coords:
@@ -109,7 +109,7 @@ def gen_rdf(rvec,npar,density,rcut=None,nbins=20,print_msg=False):
     r=0.5*(bins[:-1]+bins[1:])
     return r,rdf
 
-@nb.njit
+# @nb.njit
 def Sint3D(q,r,gr,rho):
     f=np.sin(q*r)*r*(gr-1)
     return 1+4*np.pi*rho*si.trapz(f,r)/q
