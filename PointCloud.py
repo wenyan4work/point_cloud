@@ -70,7 +70,7 @@ def impose_pbc(coords, boxsize):
         for i in range(dim):
             while p[i] < 0:
                 p[i] = p[i]+boxsize[i]
-            while p[i] > boxsize[i]:
+            while p[i] >= boxsize[i]:
                 p[i] = p[i]-boxsize[i]
 
 @nb.njit
