@@ -23,6 +23,8 @@ def SpSpp(xvec, pvec, kmax, k_unit):
                     ci = xvec[i]
                     pi = pvec[i]
                     for j in range(N):
+                        if j == i:
+                            continue
                         cj = xvec[j]
                         pj = pvec[j]
                         kpi = kvec.dot(pi)
@@ -33,7 +35,7 @@ def SpSpp(xvec, pvec, kmax, k_unit):
     return (Sp_space, Spp_space)
 
 
-def calc(file, box, kmax=5):
+def calc(file, box, kmax=10):
     data = np.loadtxt(file, skiprows=2, usecols=(3, 4, 5, 6, 7, 8))
     xvec = (data[:, :3]+data[:, 3:])/2
     vec = (data[:, 3:]-data[:, :3])
@@ -66,7 +68,7 @@ def calc(file, box, kmax=5):
     Sp_space, Spp_space = SpSpp(xvec, pvec, kmax, k_unit)
     t.stop()
 
-    SpSpp.parallel_diagnostics(level=4)
+    # SpSpp.parallel_diagnostics(level=4)
 
     for a in range(0, 2*kmax+1):
         for b in range(0, 2*kmax+1):
