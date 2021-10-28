@@ -2,18 +2,20 @@ import numpy as np
 import numba as nb
 import matplotlib.pyplot as plt
 import codetiming as ct
+from numba import njit, prange
 
 
-@nb.njit
+@njit(parallel=True)
 def SpSpp(xvec, pvec, kmax, k_unit):
-    N = xvec.shape[0]//100
     Sp_space = np.zeros((2*kmax+1, 2*kmax+1, 2*kmax+1))
     Spp_space = np.zeros((2*kmax+1, 2*kmax+1, 2*kmax+1))
-    for a in range(0, 2*kmax+1):
-        for b in range(0, 2*kmax+1):
-            for c in range(0, 2*kmax+1):
-                kvec = np.array([a-kmax, b-kmax, c-kmax])
-                kvec = kvec*k_unit
+
+    N = xvec.shape[0]//1000
+
+    for a in prange(0, 2*kmax+1):
+        for b in prange(0, 2*kmax+1):
+            for c in prange(0, 2*kmax+1):
+                kvec = np.array([a-kmax, b-kmax, c-kmax])*k_unit
                 k2 = kvec.dot(kvec)
                 if k2 > (k_unit*kmax)**2:
                     continue
@@ -63,6 +65,8 @@ def calc(file, box, kmax=5):
     t.start()
     Sp_space, Spp_space = SpSpp(xvec, pvec, kmax, k_unit)
     t.stop()
+
+    SpSpp.parallel_diagnostics(level=4)
 
     for a in range(0, 2*kmax+1):
         for b in range(0, 2*kmax+1):
